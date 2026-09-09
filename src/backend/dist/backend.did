@@ -1,0 +1,105 @@
+type Vehicle = 
+ record {
+   bodyType: BodyType;
+   colour: text;
+   condition: Condition;
+   description: text;
+   featured: bool;
+   imageUrl: text;
+   make: text;
+   model: text;
+   price: opt nat;
+   priceLabel: text;
+   stockId: text;
+   trim: text;
+   year: nat;
+ };
+type Value = 
+ variant {
+   "bool": bool;
+   float: float64;
+   "int": int;
+   "nat": nat;
+   "null";
+   "text": text;
+ };
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type Result__1 = 
+ variant {
+   err: Error;
+   ok;
+ };
+type Result = 
+ record {
+   hasMore: bool;
+   rows: vec vec Cell;
+ };
+type Inquiry = 
+ record {
+   createdAt: int;
+   message: text;
+   name: text;
+   phone: text;
+   vehicleOfInterest: text;
+ };
+type Error = 
+ variant {
+   AmbiguousAttribute: record {
+                         field: text;
+                         sources: vec text;
+                       };
+   FrontendOriginMismatch: record {
+                             expected: vec text;
+                             got: text;
+                           };
+   FrontendOriginsNotConfigured;
+   MalformedCandid;
+   MissingField: text;
+   MixedSsoSources: record {
+                      otherKeys: vec text;
+                      ssoKeys: vec text;
+                    };
+   NoAttributes;
+   Stale: record {ageNs: nat;};
+   UnknownNonce;
+   UntrustedSsoSource: record {domain: text;};
+ };
+type Condition = 
+ variant {
+   BrandNew;
+   Roro;
+ };
+type Cell = 
+ record {
+   name: text;
+   value: Value;
+ };
+type BodyType = 
+ variant {
+   Coupe;
+   Hatchback;
+   SUV;
+   Sedan;
+   Van;
+   Wagon;
+ };
+service : {
+  _initialize_access_control: () -> ();
+  _internet_identity_sign_in_finish: () -> (Result__1);
+  _internet_identity_sign_in_start: () -> (blob);
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  execute: (qJson: text) -> (Result) query;
+  getApiDoc: () -> (text) query;
+  getCallerUserRole: () -> (UserRole) query;
+  getVehicle: (stockId: text) -> (opt Vehicle) query;
+  isCallerAdmin: () -> (bool) query;
+  listVehicles: () -> (vec Vehicle) query;
+  listVehiclesByMake: (make: text) -> (vec Vehicle) query;
+  schema: () -> (text) query;
+  submitInquiry: (inquiry: Inquiry) -> ();
+}
